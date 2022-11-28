@@ -12,6 +12,8 @@ namespace LiteSpeed;
 defined( 'WPINC' ) || exit;
 
 class Control extends Root {
+	const LOG_TAG = '💵';
+
 	const BM_CACHEABLE = 1;
 	const BM_PRIVATE = 2;
 	const BM_SHARED = 4;
@@ -91,7 +93,10 @@ class Control extends Root {
 			return false;
 		}
 
-		return in_array( $role, $this->conf( Base::O_CACHE_EXC_ROLES ) ) ? $role : false;
+		$roles = explode( ',', $role );
+		$found = array_intersect( $roles, array_keys( $this->conf( Base::O_CACHE_EXC_ROLES ) ) );
+
+		return $found ? implode( ',', $found ) : false;
 	}
 
 	/**
@@ -495,21 +500,32 @@ class Control extends Root {
 	 */
 	public function check_redirect( $location, $status ) { // TODO: some env don't have SCRIPT_URI but only REQUEST_URI, need to be compatible
 		if ( ! empty( $_SERVER[ 'SCRIPT_URI' ] ) ) { // dont check $status == '301' anymore
-			Debug2::debug( "[Ctrl] 301 from " . $_SERVER[ 'SCRIPT_URI' ] );
-			Debug2::debug( "[Ctrl] 301 to $location" );
+			self::debug( "301 from " . $_SERVER[ 'SCRIPT_URI' ] );
+			self::debug( "301 to $location" );
 
 			$to_check = array(
 				PHP_URL_SCHEME,
 				PHP_URL_HOST,
 				PHP_URL_PATH,
+				PHP_URL_QUERY,
 			);
 
 			$is_same_redirect = true;
 
 			foreach ( $to_check as $v ) {
-				if ( parse_url( $_SERVER[ 'SCRIPT_URI' ], $v ) != parse_url( $location, $v ) ) {
+				$url_parsed = $v == PHP_URL_QUERY ? $_SERVER[ 'QUERY_STRING' ] : parse_url( $_SERVER[ 'SCRIPT_URI' ], $v );
+				$target = parse_url( $location, $v );
+
+				self::debug("Compare [from] $url_parsed [to] $target");
+
+				if($v==PHP_URL_QUERY) {
+					$url_parsed = urldecode($url_parsed);
+					$target = urldecode($target);
+				}
+
+				if ( $url_parsed != $target ) {
 					$is_same_redirect = false;
-					Debug2::debug( "[Ctrl] 301 different redirection" );
+					self::debug( "301 different redirection" );
 					break;
 				}
 			}
@@ -600,6 +616,17 @@ class Control extends Root {
 			// return;
 		}
 
+		if ( is_preview() ) {
+			self::set_nocache( 'preview page' );
+			return;
+		}
+
+		// Check if has metabox non-cacheable setting or not
+		if ( file_exists( LSCWP_DIR . 'src/metabox.cls.php' ) && $this->cls( 'Metabox' )->setting( 'litespeed_no_cache' ) ) {
+			self::set_nocache( 'per post metabox setting' );
+			return;
+		}
+
 		// Check if URI is forced public cache
 		$excludes = $this->conf( Base::O_CACHE_FORCE_PUB_URI );
 		$hit =  Utility::str_hit_array( $_SERVER[ 'REQUEST_URI' ], $excludes, true );
@@ -642,11 +669,6 @@ class Control extends Root {
 		// if is not cacheable, terminate check
 		if ( ! self::is_cacheable() ) {
 			Debug2::debug( '[Ctrl] not cacheable after api_control' );
-			return;
-		}
-
-		if ( is_preview() ) {
-			self::set_nocache( 'preview page' );
 			return;
 		}
 

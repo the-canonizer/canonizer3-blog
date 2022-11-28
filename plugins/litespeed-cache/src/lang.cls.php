@@ -42,6 +42,38 @@ class Lang extends Base {
 	}
 
 	/**
+	 * Try translating a string
+	 *
+	 * @since  4.7
+	 */
+	public static function maybe_translate( $raw_string ) {
+		$map = array(
+			'auto_alias_failed_cdn' => __( 'Unable to automatically add %1$s as a Domain Alias for main %2$s domain, due to potential CDN conflict.', 'litespeed-cache' ) . ' ' . Doc::learn_more( 'https://quic.cloud/docs/cdn/dns/how-to-setup-domain-alias/', false, false, false, true ),
+
+			'auto_alias_failed_uid' =>
+				__( 'Unable to automatically add %1$s as a Domain Alias for main %2$s domain.', 'litespeed-cache' ) .
+				' ' . __( 'Alias is in use by another QUIC.cloud account.', 'litespeed-cache' ) .
+				' ' . Doc::learn_more( 'https://quic.cloud/docs/cdn/dns/how-to-setup-domain-alias/', false, false, false, true ),
+		);
+
+		// Maybe has placeholder
+		if ( strpos( $raw_string, '::' ) ) {
+			$replacements = explode( '::', $raw_string );
+			if ( empty( $map[ $replacements[0] ] ) ) {
+				return $raw_string;
+			}
+			$tpl = $map[ $replacements[0] ];
+			unset($replacements[0]);
+			return vsprintf( $tpl, array_values( $replacements ) );
+		}
+
+		// Direct translation only
+		if ( empty( $map[ $raw_string ] ) ) return $raw_string;
+
+		return $map[ $raw_string ];
+	}
+
+	/**
 	 * Get the title of id
 	 *
 	 * @since  3.0
@@ -109,7 +141,8 @@ class Lang extends Base {
 			self::O_OPTM_CSS_COMB_EXT_INL		=> __( 'CSS Combine External and Inline', 'litespeed-cache' ),
 			self::O_OPTM_UCSS					=> __( 'Generate UCSS', 'litespeed-cache' ),
 			self::O_OPTM_UCSS_INLINE			=> __( 'UCSS Inline', 'litespeed-cache' ),
-			self::O_OPTM_UCSS_WHITELIST			=> __( 'UCSS Allowlist', 'litespeed-cache' ),
+			self::O_OPTM_UCSS_SELECTOR_WHITELIST	=> __( 'UCSS Selector Allowlist', 'litespeed-cache' ),
+			self::O_OPTM_UCSS_FILE_EXC_INLINE	=> __( 'UCSS File Excludes and Inline', 'litespeed-cache' ),
 			self::O_OPTM_UCSS_EXC				=> __( 'UCSS URI Excludes', 'litespeed-cache' ),
 			self::O_OPTM_JS_MIN					=> __( 'JS Minify', 'litespeed-cache' ),
 			self::O_OPTM_JS_COMB				=> __( 'JS Combine', 'litespeed-cache' ),
@@ -164,11 +197,14 @@ class Lang extends Base {
 			self::O_MEDIA_PLACEHOLDER_RESP_ASYNC	=> __( 'Generate LQIP In Background', 'litespeed-cache' ),
 			self::O_MEDIA_IFRAME_LAZY			=> __( 'Lazy Load Iframes', 'litespeed-cache' ),
 			self::O_MEDIA_ADD_MISSING_SIZES		=> __( 'Add Missing Sizes', 'litespeed-cache' ),
+			self::O_MEDIA_VPI					=> __( 'Viewport Images', 'litespeed-cache' ),
+			self::O_MEDIA_VPI_CRON 				=> __( 'Viewport Images Cron', 'litespeed-cache' ),
+
 			self::O_IMG_OPTM_AUTO				=> __( 'Auto Request Cron', 'litespeed-cache' ),
 			self::O_IMG_OPTM_CRON				=> __( 'Auto Pull Cron', 'litespeed-cache' ),
 			self::O_IMG_OPTM_ORI				=> __( 'Optimize Original Images', 'litespeed-cache' ),
 			self::O_IMG_OPTM_RM_BKUP			=> __( 'Remove Original Backups', 'litespeed-cache' ),
-			self::O_IMG_OPTM_WEBP				=> __( 'Create WebP Versions', 'litespeed-cache' ),
+			self::O_IMG_OPTM_WEBP				=> __( 'Image WebP Replacement', 'litespeed-cache' ),
 			self::O_IMG_OPTM_LOSSLESS			=> __( 'Optimize Losslessly', 'litespeed-cache' ),
 			self::O_IMG_OPTM_EXIF				=> __( 'Preserve EXIF/XMP data', 'litespeed-cache' ),
 			self::O_IMG_OPTM_WEBP_ATTR			=> __( 'WebP Attribute To Replace', 'litespeed-cache' ),
@@ -185,7 +221,6 @@ class Lang extends Base {
 			self::O_CACHE_EXC_COOKIES			=> __( 'Do Not Cache Cookies', 'litespeed-cache' ),
 			self::O_CACHE_EXC_USERAGENTS		=> __( 'Do Not Cache User Agents', 'litespeed-cache' ),
 			self::O_CACHE_LOGIN_COOKIE			=> __( 'Login Cookie', 'litespeed-cache' ),
-			self::O_IMG_OPTM_WEBP_REPLACE		=> __( 'Image WebP Replacement', 'litespeed-cache' ),
 
 			self::O_MISC_HEARTBEAT_FRONT		=> __( 'Frontend Heartbeat Control', 'litespeed-cache' ),
 			self::O_MISC_HEARTBEAT_FRONT_TTL	=> __( 'Frontend Heartbeat TTL', 'litespeed-cache' ),
@@ -230,6 +265,7 @@ class Lang extends Base {
 			self::O_DEBUG_COLLAPS_QS			=> __( 'Collapse Query Strings', 'litespeed-cache' ),
 			self::O_DEBUG_INC					=> __( 'Debug URI Includes', 'litespeed-cache' ),
 			self::O_DEBUG_EXC					=> __( 'Debug URI Excludes', 'litespeed-cache' ),
+			self::O_DEBUG_EXC_STRINGS			=> __( 'Debug String Excludes', 'litespeed-cache' ),
 
 			self::O_DB_OPTM_REVISIONS_MAX		=> __( 'Revisions Max Number', 'litespeed-cache' ),
 			self::O_DB_OPTM_REVISIONS_AGE		=> __( 'Revisions Max Age', 'litespeed-cache' ),

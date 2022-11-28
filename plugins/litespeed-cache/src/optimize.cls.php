@@ -65,7 +65,7 @@ class Optimize extends Base {
 				Debug2::debug( '[Optm] ❌ CCSS set to OFF due to missing domain key' );
 				$this->cfg_css_async = false;
 			}
-			if ( ( defined( 'LITESPEED_GUEST_OPTM' ) || $this->conf( self::O_OPTM_UCSS ) ) && $this->conf( self::O_OPTM_UCSS_INLINE ) ) {
+			if ( ( defined( 'LITESPEED_GUEST_OPTM' ) || ( $this->conf( self::O_OPTM_UCSS ) && $this->conf( self::O_OPTM_CSS_COMB ) ) ) && $this->conf( self::O_OPTM_UCSS_INLINE ) ) {
 				Debug2::debug( '[Optm] ❌ CCSS set to OFF due to UCSS Inline' );
 				$this->cfg_css_async = false;
 			}
@@ -291,7 +291,7 @@ class Optimize extends Base {
 				if ( $this->cfg_css_comb ) {
 					// Check if has inline UCSS enabled or not
 					if ( ( defined( 'LITESPEED_GUEST_OPTM' ) || $this->conf( self::O_OPTM_UCSS ) ) && $this->conf( self::O_OPTM_UCSS_INLINE ) ) {
-						$filename = $this->cls( 'CSS' )->load_ucss( $this->_request_url, true );
+						$filename = $this->cls( 'UCSS' )->load( $this->_request_url, true );
 						if ( $filename ) {
 							$filepath_prefix = $this->_build_filepath_prefix( 'ucss' );
 							$this->_ucss = File::read( LITESPEED_STATIC_DIR . $filepath_prefix . $filename );
@@ -681,7 +681,7 @@ class Optimize extends Base {
 	private function _src_queue_handler( $src_list, $html_list, $file_type = 'css' ) {
 		$html_list_ori = $html_list;
 
-		$can_webp = ( defined( 'LITESPEED_GUEST_OPTM' ) || $this->conf( Base::O_IMG_OPTM_WEBP_REPLACE ) ) && $this->cls( 'Media' )->webp_support();
+		$can_webp = ( defined( 'LITESPEED_GUEST_OPTM' ) || $this->conf( Base::O_IMG_OPTM_WEBP ) ) && $this->cls( 'Media' )->webp_support();
 
 		$tag = $file_type == 'css' ? 'link' : 'script';
 		foreach ( $src_list as $key => $src_info ) {
@@ -784,7 +784,7 @@ class Optimize extends Base {
 		// Add cache tag in case later file deleted to avoid lscache served stale non-existed files @since 4.4.1
 		Tag::add( Tag::TYPE_MIN . '.' . $filename );
 
-		$qs_hash = substr( md5( self::get_option( self::ITEM_TIMESTAMP_PURGE_CSS) ), -5 );//xx
+		$qs_hash = substr( md5( self::get_option( self::ITEM_TIMESTAMP_PURGE_CSS) ), -5 );
 		// As filename is alreay realted to filecon md5, no need QS anymore
 		$filepath_prefix = $this->_build_filepath_prefix( $type );
 		return LITESPEED_STATIC_URL . $filepath_prefix . $filename . '?ver=' . $qs_hash;
@@ -968,6 +968,7 @@ class Optimize extends Base {
 	 */
 	private function _parse_css() {
 		$excludes = apply_filters( 'litespeed_optimize_css_excludes', $this->conf( self::O_OPTM_CSS_EXC ) );
+		$ucss_file_exc_inline = apply_filters( 'litespeed_optimize_ucss_file_exc_inline', $this->conf( self::O_OPTM_UCSS_FILE_EXC_INLINE ) );
 
 		$combine_ext_inl = $this->conf( self::O_OPTM_CSS_COMB_EXT_INL );
 
@@ -1009,6 +1010,16 @@ class Optimize extends Base {
 					Debug2::debug( '[Optm] rm css snippet ' . $attrs[ 'href' ] );
 					// Delete this css snippet from orig html
 					$this->content = str_replace( $match[ 0 ], '', $this->content );
+
+					continue;
+				}
+
+				// Check if need to inline this css file
+				if ( Utility::str_hit_array( $attrs[ 'href' ], $ucss_file_exc_inline ) ) {
+					Debug2::debug( '[Optm] ucss_file_exc_inline hit ' . $attrs[ 'href' ] );
+					// Replace this css to inline from orig html
+					$inline_script = '<style>' . $this->__optimizer->load_file($attrs[ 'href' ]) . '</style>';
+					$this->content = str_replace( $match[ 0 ], $inline_script, $this->content );
 
 					continue;
 				}
