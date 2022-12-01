@@ -13,6 +13,8 @@ namespace LiteSpeed;
 defined( 'WPINC' ) || exit;
 
 class Admin extends Root {
+	const LOG_TAG = '👮';
+
 	const PAGE_EDIT_HTACCESS = 'litespeed-edit-htaccess';
 
 	/**
@@ -27,6 +29,9 @@ class Admin extends Root {
 			define( 'LSCWP_MU_PLUGIN', true );
 		}
 
+		self::debug( 'No cache due to Admin page' );
+		defined( 'DONOTCACHEPAGE' ) || define( 'DONOTCACHEPAGE', true );
+
 		// Additional litespeed assets on admin display
 		// Also register menu
 		$this->cls( 'Admin_Display' );
@@ -36,24 +41,6 @@ class Admin extends Root {
 		// add link to plugin list page
 		add_filter( 'plugin_action_links_' . LSCWP_BASENAME, array( $this->cls( 'Admin_Display' ), 'add_plugin_links' ) );
 
-		if ( defined( 'LITESPEED_ON' ) ) {
-			// register purge_all actions
-			$purge_all_events = $this->conf( Base::O_PURGE_HOOK_ALL );
-
-			// purge all on upgrade
-			if ( $this->conf( Base::O_PURGE_ON_UPGRADE ) ) {
-				$purge_all_events[] = 'upgrader_process_complete';
-				$purge_all_events[] = 'admin_action_do-plugin-upgrade';
-			}
-			foreach ( $purge_all_events as $event ) {
-				// Don't allow hook to update_option bcos purge_all will cause infinite loop of update_option
-				if ( in_array( $event, array( 'update_option' ) ) ) {
-					continue;
-				}
-				add_action( $event, __NAMESPACE__ . '\Purge::purge_all' );
-			}
-			// add_filter( 'upgrader_pre_download', 'Purge::filter_with_purge_all' );
-		}
 	}
 
 	/**
@@ -63,8 +50,6 @@ class Admin extends Root {
 	 * @access public
 	 */
 	public function admin_init() {
-		Control::set_nocache( 'Admin page' );
-
 		// Hook attachment upload
 		if ( $this->conf( Base::O_IMG_OPTM_AUTO ) ) {
 			add_filter( 'wp_update_attachment_metadata', array( $this, 'wp_update_attachment_metadata' ), 9999, 2 );
