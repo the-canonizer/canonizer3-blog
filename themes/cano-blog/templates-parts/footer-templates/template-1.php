@@ -110,7 +110,7 @@ if (!defined('ABSPATH')) exit;  // if direct access
 				</div>
 			</div>
 			<div class="col-md-12 copyright_text">
-				<p>Copyright owned by the volunteers contributing to the system and its contents (2006 - 2022)</p>
+				<p>Copyright owned by the volunteers contributing to the system and its contents (2006 - <?php echo date("Y"); ?>)</p>
 			</div>
 		</div>
 	</div>
