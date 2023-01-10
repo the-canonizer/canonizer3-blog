@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) exit;  // if direct access
 			<div class="col-lg-3 col-md-3 col-sm-12">
 				<div class="footer_logo">
 					<img src="<?php echo get_template_directory_uri(); ?>/assets/images/footer-logo.svg">
-					<p>Pattent: US 8,160,970 B2</p>
+					<p>Patent: US 8,160,970 B2</p>
 				</div>
 
 				<div class="footer_menu">
