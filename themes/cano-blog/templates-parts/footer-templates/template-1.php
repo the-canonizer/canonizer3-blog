@@ -11,7 +11,9 @@ if (!defined('ABSPATH')) exit;  // if direct access
 		<div class="row">
 			<div class="col-lg-3 col-md-3 col-sm-12">
 				<div class="footer_logo">
-					<img src="<?php echo get_template_directory_uri(); ?>/assets/images/footer-logo.svg">
+					<a href="https://canonizer.com/" target="_blank">
+						<img src="<?php echo get_template_directory_uri(); ?>/assets/images/footer-logo.svg">
+					</a>
 					<p>Patent: US 8,160,970 B2</p>
 				</div>
 
@@ -166,24 +168,15 @@ if (!defined('ABSPATH')) exit;  // if direct access
 
 				endif;
 				?>
-
-
-
-
-
 			</div>
 			<div class="row">
 
 				<div class="col-md-12">
 					<span class="footer-copyright" style="margin-left:-110px;">
-						<a style="color:#FFF;" href="https://canonizer.com/privacypolicy">Privacy Policy</a> | <a style="color:#FFF;" href="https://canonizer.com/termservice">Terms & Services</a>
+						<a style="color:#FFF;" href="https://canonizer.com/privacy-policy">Privacy Policy</a> | <a style="color:#FFF;" href="https://canonizer.com/terms-and-services">Terms & Servicess</a>
 					</span>
 				</div>
 			</div>
-
 		</div>
-
-
-
 	</div>
 </div>
