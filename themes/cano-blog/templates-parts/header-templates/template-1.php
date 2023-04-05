@@ -56,7 +56,7 @@ function pritnURL($st, $lv)
             endif;
             ?>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-expanded="true">
-                <span><img src="<?php echo get_template_directory_uri() ?>/assets/images/menu-2-line.png"></span>
+                <span><img src="<?php echo get_template_directory_uri() ?>/assets/images/menu-2-line.png" alt="menu-line"></span>
             </button>
         </div>
 
