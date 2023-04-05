@@ -135,7 +135,7 @@ if ( ! defined('ABSPATH')) exit;  // if direct access
 
             <div class="about-me">
 
-                <div class="thumb"><img src="<?php echo esc_url_raw($profile_src_url); ?>" /> </div>
+                <div class="thumb"><img src="<?php echo esc_url_raw($profile_src_url); ?>" alt="thumb" /> </div>
                 <div class="name"><?php echo esc_attr($profile_name); ?></div>
                 <p class="descriptions"><?php echo esc_html($profile_descriptions); ?></p>
 

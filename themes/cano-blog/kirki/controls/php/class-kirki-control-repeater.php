@@ -331,7 +331,7 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 
 									<# _.each( field.choices, function( choice, i ) { #>
 										<input type="radio" id="{{{ field.id }}}_{{ index }}_{{{ i }}}" name="{{{ field.id }}}{{ index }}" data-field="{{{ field.id }}}" value="{{{ i }}}" <# if ( field.default == i ) { #> checked="checked" <# } #>>
-											<label for="{{{ field.id }}}_{{ index }}_{{{ i }}}"><img src="{{ choice }}"></label>
+											<label for="{{{ field.id }}}_{{ index }}_{{{ i }}}"><img src="{{ choice }}" alt=""></label>
 										</input>
 									<# }); #>
 								</label>
@@ -366,7 +366,7 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 								<figure class="kirki-image-attachment" data-placeholder="<?php esc_attr_e( 'No Image Selected', 'bug-blog' ); ?>" >
 									<# if ( field.default ) { #>
 										<# var defaultImageURL = ( field.default.url ) ? field.default.url : field.default; #>
-										<img src="{{{ defaultImageURL }}}">
+										<img src="{{{ defaultImageURL }}}" alt="">
 									<# } else { #>
 										<?php esc_attr_e( 'No Image Selected', 'bug-blog' ); ?>
 									<# } #>

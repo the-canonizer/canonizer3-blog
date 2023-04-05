@@ -6,7 +6,7 @@ if ( ! defined('ABSPATH')) exit;  // if direct access
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
     <div class="entry-thumbnail">
-        <img src="<?php echo wp_get_attachment_url(); ?>">
+        <img src="<?php echo wp_get_attachment_url(); ?>" alt="">
     </div>
 
     <h1 class="title entry-title">

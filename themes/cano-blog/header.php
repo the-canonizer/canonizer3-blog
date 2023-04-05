@@ -15,8 +15,33 @@
     <link rel="icon" href="<?php echo get_template_directory_uri(); ?>/assets/images/canonizer-fav.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="<?php echo get_template_directory_uri(); ?>/assets/images/canonizer-fav.png" />
     <link rel="icon" href="<?php echo get_template_directory_uri(); ?>/assets/images/canonizer-fav.png" />
-    
+
     <?php wp_head(); ?>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://blog.canonizer.com/"
+            },
+            "headline": "Canonizer Blog",
+            "image": "https://canonizer-public-file.s3.us-east-2.amazonaws.com/site-images/logo.svg",
+            "author": {
+                "@type": "Organization",
+                "name": ""
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": ""
+                }
+            },
+            "datePublished": ""
+        }
+    </script>
 </head>
 
 <body <?php body_class(); ?>>

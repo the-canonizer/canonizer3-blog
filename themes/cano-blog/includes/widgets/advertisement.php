@@ -163,7 +163,7 @@ if ( ! defined('ABSPATH')) exit;  // if direct access
 	                    //var_dump($advertisement_data);
 
 	                    if (!empty($banner_target_url)) { ?>
-                            <li ><a href="<?php echo esc_url_raw($banner_target_url); ?>" class="banner-link"><img style="width:<?php echo esc_attr($banner_width); ?> ;height:<?php echo esc_attr($banner_height); ?> " src="<?php echo esc_url_raw($banner_src_url); ?>" /></a></li>
+                            <li ><a href="<?php echo esc_url_raw($banner_target_url); ?>" class="banner-link"><img style="width:<?php echo esc_attr($banner_width); ?> ;height:<?php echo esc_attr($banner_height); ?> " src="<?php echo esc_url_raw($banner_src_url); ?>" alt="banner" /></a></li>
 	                    <?php }
                     }
 
